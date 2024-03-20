@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Fastest_route_graph.MainPage"
+             xmlns:drawable="clr-namespace:Fastest_route_graph">
+
+    <ContentPage.Resources>
+        <drawable:Drawing x:Key="MyDrawable" />
+    </ContentPage.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="4*" />
+        </Grid.ColumnDefinitions>
+
+        <BoxView Color="#28262b" Grid.Column="0"/>
+        <BoxView x:Name="RightSide" Color="#333333" Grid.Column="1"/>
+
+        <!-- Left Panel: -->
+        <!-- #1 Number of nodes -->
+        <!-- #2 Reset nodes -->
+        
+        <GraphicsView
+            x:Name="DrawSurface"
+            HorizontalOptions="Fill"
+            Drawable="{StaticResource MyDrawable}"
+            Grid.Column="1">
+
+            <GraphicsView.GestureRecognizers>
+                <TapGestureRecognizer Tapped="MouseLeftClick" />
+            </GraphicsView.GestureRecognizers>
+        </GraphicsView>
+    </Grid>
+
+</ContentPage>
