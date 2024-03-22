@@ -1,15 +1,14 @@
 ﻿using Microsoft.Maui.Graphics;
 using System.Drawing;
+using Fastest_route_graph.Resources.Class;
 
 namespace Fastest_route_graph
 {
     /* To Do:
      * 
-     * TranslatePointToTheMiddleOfaCircle doesnt work. It worked when it wasnt seperated method tho
-     * 
-     * jak kliknieto w kolo to polacz ze srodkiem
+     * zapobiegaj stawianiu noda na skraju scianki
      * podswietlaj kolo na najechanie
-     * nie lacz z obecnym i przedostatnim nodem
+     * nie dodawaj do clickedPoints kiedy polaczono z obecnym i przedostatnim nodem
      * nie podswietlaj obecnego i przedostatniego noda
      * 
      */
@@ -39,8 +38,10 @@ namespace Fastest_route_graph
                 // when clicked in existing circle connect to the middle of it
                 p = TranslatePointToTheMiddleOfaCircle(p);
 
+                if (p.X == -1 && p.Y == -1) { return; }
+
                 // updates clickedPoints List in this class
-                clickedPoints.Add(new System.Drawing.PointF(x, y));
+                clickedPoints.Add(p);
 
                 // updates clickedPoints List in Drawing class
                 var drawable = (Drawing)this.Resources["MyDrawable"];
@@ -65,6 +66,11 @@ namespace Fastest_route_graph
 
                     return p;
                 }
+
+                if (distance <= 90)
+                {
+                    return new System.Drawing.PointF(-1, -1);
+                }
             }
             return p;
         }
@@ -77,28 +83,6 @@ namespace Fastest_route_graph
 
             DrawSurface.WidthRequest = boxViewWidth;
             DrawSurface.HeightRequest = boxViewHeight;
-        }
-    }
-    public class Drawing : IDrawable
-    {
-
-        public List<System.Drawing.PointF> clickedPoints { get; set; } = new List<System.Drawing.PointF>();
-
-        public void Draw(ICanvas canvas, RectF dirtyRect)
-        {
-            canvas.StrokeColor = Colors.White;
-            canvas.FillColor = Colors.White;
-            canvas.StrokeSize = 6;
-
-            for (int i = 0; i < clickedPoints.Count; i++)
-            {
-                canvas.FillCircle(clickedPoints[i].X, clickedPoints[i].Y, 30);
-            }
-
-            for (int i = 0; i < clickedPoints.Count - 1; i++)
-            {
-                canvas.DrawLine(clickedPoints[i].X, clickedPoints[i].Y, clickedPoints[i + 1].X, clickedPoints[i + 1].Y);
-            }
         }
     }
 }
