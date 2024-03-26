@@ -8,7 +8,7 @@ namespace Fastest_route_graph.Resources.Class
 {
     internal class Drawing : IDrawable
     {
-        public List<System.Drawing.PointF> clickedPoints { get; set; } = new List<System.Drawing.PointF>();
+        public List<System.Drawing.PointF> ClickedPoints { get; set; } = new List<System.Drawing.PointF>();
 
         public void Draw(ICanvas canvas, RectF dirtyRect)
         {
@@ -16,14 +16,14 @@ namespace Fastest_route_graph.Resources.Class
             canvas.FillColor = Colors.White;
             canvas.StrokeSize = 6;
 
-            for (int i = 0; i < clickedPoints.Count; i++)
+            for (int i = 0; i < ClickedPoints.Count; i++)
             {
-                canvas.FillCircle(clickedPoints[i].X, clickedPoints[i].Y, 30);
+                canvas.FillCircle(ClickedPoints[i].X, ClickedPoints[i].Y, 30);
             }
 
-            for (int i = 0; i < clickedPoints.Count - 1; i++)
+            for (int i = 0; i < ClickedPoints.Count - 1; i++)
             {
-                canvas.DrawLine(clickedPoints[i].X, clickedPoints[i].Y, clickedPoints[i + 1].X, clickedPoints[i + 1].Y);
+                canvas.DrawLine(ClickedPoints[i].X, ClickedPoints[i].Y, ClickedPoints[i + 1].X, ClickedPoints[i + 1].Y);
             }
         }
     }

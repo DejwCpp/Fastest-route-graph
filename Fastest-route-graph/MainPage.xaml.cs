@@ -6,16 +6,14 @@ namespace Fastest_route_graph
 {
     /* To Do:
      * 
-     * zapobiegaj stawianiu noda na skraju scianki
-     * podswietlaj kolo na najechanie
-     * nie dodawaj do clickedPoints kiedy polaczono z obecnym i przedostatnim nodem
-     * nie podswietlaj obecnego i przedostatniego noda
+     * podswietlaj kolo na najechanie (probowalem, ale sie nie udalo)
      * 
      */
 
     public partial class MainPage : ContentPage
     {
-        private List<System.Drawing.PointF> clickedPoints = new List<System.Drawing.PointF>();
+        private List<System.Drawing.PointF> ClickedPoints = new List<System.Drawing.PointF>();
+        private int CircleRadius = 30;
 
         public MainPage()
         {
@@ -35,17 +33,17 @@ namespace Fastest_route_graph
 
                 System.Drawing.PointF p = new System.Drawing.PointF(x, y);
 
-                // when clicked in existing circle connect to the middle of it
-                p = TranslatePointToTheMiddleOfaCircle(p);
+                // doing a set of condition depending when user clicked
+                p = PointPlacementConditions(p);
 
                 if (p.X == -1 && p.Y == -1) { return; }
 
-                // updates clickedPoints List in this class
-                clickedPoints.Add(p);
+                // updates ClickedPoints List in this class
+                ClickedPoints.Add(p);
 
                 // updates clickedPoints List in Drawing class
                 var drawable = (Drawing)this.Resources["MyDrawable"];
-                drawable.clickedPoints = clickedPoints;
+                drawable.ClickedPoints = ClickedPoints;
 
                 // the Draw method is called each time when mouse left is clicked thanks to this
                 DrawSurface.Invalidate();
@@ -53,20 +51,37 @@ namespace Fastest_route_graph
         }
 
         // when clicked in existing circle connects to the middle of it
-        private System.Drawing.PointF TranslatePointToTheMiddleOfaCircle(System.Drawing.PointF p)
+        private System.Drawing.PointF PointPlacementConditions(System.Drawing.PointF p)
         {
-            for (int i = 0; i < clickedPoints.Count; i++)
+            // prevents nodes from being placed too close to the side of the window
+            if (p.X < CircleRadius || p.Y < CircleRadius || p.X > DrawSurface.Width - CircleRadius || p.Y > DrawSurface.Height - CircleRadius)
             {
-                double distance = Math.Sqrt(Math.Pow(p.X - clickedPoints[i].X, 2) + Math.Pow(p.Y - clickedPoints[i].Y, 2));
+                return new System.Drawing.PointF(-1, -1);
+            }
+            // prevent creating new node when clicked in the area of last added node
+            if (ClickedPoints.Count >= 1)
+            {
+                double lastNodeDistance = Math.Sqrt(Math.Pow(p.X - ClickedPoints[ClickedPoints.Count - 1].X, 2) + Math.Pow(p.Y - ClickedPoints[ClickedPoints.Count - 1].Y, 2));
 
-                if (distance <= 30)
+                if (lastNodeDistance <= CircleRadius)
                 {
-                    p.X = (int)clickedPoints[i].X;
-                    p.Y = (int)clickedPoints[i].Y;
+                    return new System.Drawing.PointF(-1, -1);
+                }
+            }
+
+            for (int i = 0; i < ClickedPoints.Count; i++)
+            {
+                double distance = Math.Sqrt(Math.Pow(p.X - ClickedPoints[i].X, 2) + Math.Pow(p.Y - ClickedPoints[i].Y, 2));
+
+                // when clicked in existing circle connect to the middle of it
+                if (distance <= CircleRadius)
+                {
+                    p.X = (int)ClickedPoints[i].X;
+                    p.Y = (int)ClickedPoints[i].Y;
 
                     return p;
                 }
-
+                // prevents nodes from being placed too close from each other
                 if (distance <= 90)
                 {
                     return new System.Drawing.PointF(-1, -1);
