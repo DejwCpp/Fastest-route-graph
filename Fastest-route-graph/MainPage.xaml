@@ -8,7 +8,7 @@
         <drawable:Drawing x:Key="MyDrawable" />
     </ContentPage.Resources>
 
-    <Grid>
+    <Grid x:Name="mainGrid">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="4*" />
@@ -21,6 +21,9 @@
         <!-- #1 Number of nodes -->
         <!-- #2 Reset nodes -->
         
+        
+
+        <!-- Right Panel -->
         <GraphicsView
             x:Name="DrawSurface"
             HorizontalOptions="Fill"

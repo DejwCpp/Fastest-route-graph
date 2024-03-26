@@ -12,17 +12,37 @@ namespace Fastest_route_graph
 
     public partial class MainPage : ContentPage
     {
-        private List<System.Drawing.PointF> ClickedPoints = new List<System.Drawing.PointF>();
-        private int CircleRadius = 30;
+        private List<System.Drawing.PointF> ClickedPoints;
+        private int CircleRadius;
+        private bool FirstClick;
 
         public MainPage()
         {
             InitializeComponent();
             RightSide.SizeChanged += BoxViewSizeChanged;
+
+            ClickedPoints = new List<System.Drawing.PointF>();
+            CircleRadius = 30;
+            FirstClick = true;
         }
 
         private void MouseLeftClick(Object sender, TappedEventArgs e)
         {
+            // add reset button on first click
+            if (FirstClick)
+            {
+                Button btnReset = new Button
+                {
+                    Text = "Reset",
+                    FontSize = 30,
+                    WidthRequest = 200,
+                    HeightRequest = 50,
+                    VerticalOptions = LayoutOptions.Start
+                };
+                mainGrid.SetColumn(btnReset, 0);
+                mainGrid.Children.Add(btnReset);
+            }
+
             // Get the position relative to the tapped UI element.
             Microsoft.Maui.Graphics.Point? point = e.GetPosition((View)sender);
 
