@@ -14,7 +14,7 @@ namespace Fastest_route_graph
     {
         private List<System.Drawing.PointF> ClickedPoints;
         private int CircleRadius;
-        private bool FirstClick;
+        private bool IsResetBtnActive;
 
         public MainPage()
         {
@@ -23,22 +23,27 @@ namespace Fastest_route_graph
 
             ClickedPoints = new List<System.Drawing.PointF>();
             CircleRadius = 30;
-            FirstClick = true;
+            IsResetBtnActive = false;
         }
 
         private void MouseLeftClick(Object sender, TappedEventArgs e)
         {
             // add reset button on first click
-            if (FirstClick)
+            if (!IsResetBtnActive)
             {
+                IsResetBtnActive = true;
+
                 Button btnReset = new Button
                 {
                     Text = "Reset",
                     FontSize = 30,
                     WidthRequest = 200,
                     HeightRequest = 50,
-                    VerticalOptions = LayoutOptions.Start
+                    VerticalOptions = LayoutOptions.Start,
+                    Margin = new Thickness(0, 30, 0, 0)
                 };
+                btnReset.Clicked += ResetBtnClicked;
+
                 mainGrid.SetColumn(btnReset, 0);
                 mainGrid.Children.Add(btnReset);
             }
@@ -65,9 +70,26 @@ namespace Fastest_route_graph
                 var drawable = (Drawing)this.Resources["MyDrawable"];
                 drawable.ClickedPoints = ClickedPoints;
 
-                // the Draw method is called each time when mouse left is clicked thanks to this
+                // calls the Draw method in Drawing.cs
                 DrawSurface.Invalidate();
             }
+        }
+
+        private void ResetBtnClicked(Object sender, EventArgs e)
+        {
+            ClickedPoints.Clear();
+
+            // clears ClickedPoints in Drawing.cs
+            var drawable = (Drawing)this.Resources["MyDrawable"];
+            drawable.ClickedPoints.Clear();
+
+            // calls the Draw method in Drawing.cs
+            DrawSurface.Invalidate();
+
+            // removes button
+            mainGrid.Children.Remove((Button)sender);
+
+            IsResetBtnActive = false;
         }
 
         // when clicked in existing circle connects to the middle of it
