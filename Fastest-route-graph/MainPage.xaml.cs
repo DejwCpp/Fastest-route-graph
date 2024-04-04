@@ -14,7 +14,10 @@ namespace Fastest_route_graph
     {
         private List<System.Drawing.PointF> ClickedPoints;
         private int CircleRadius;
-        private bool IsResetBtnActive;
+        private int NumOfNodes;
+        private Button btnReset;
+        private Button btnWeight;
+        private Label btnWeightLabel;
 
         public MainPage()
         {
@@ -23,22 +26,22 @@ namespace Fastest_route_graph
 
             ClickedPoints = new List<System.Drawing.PointF>();
             CircleRadius = 30;
-            IsResetBtnActive = false;
+            NumOfNodes = 0;
         }
 
         private void MouseLeftClick(Object sender, TappedEventArgs e)
         {
-            // add reset button on first click
-            if (!IsResetBtnActive)
-            {
-                IsResetBtnActive = true;
+            NumOfNodes++;
 
-                Button btnReset = new Button
+            // add 'reset' button on first click
+            if (NumOfNodes == 1)
+            {
+                btnReset = new Button
                 {
                     Text = "Reset",
                     FontSize = 30,
                     WidthRequest = 200,
-                    HeightRequest = 50,
+                    HeightRequest = 60,
                     VerticalOptions = LayoutOptions.Start,
                     Margin = new Thickness(0, 30, 0, 0)
                 };
@@ -46,6 +49,24 @@ namespace Fastest_route_graph
 
                 mainGrid.SetColumn(btnReset, 0);
                 mainGrid.Children.Add(btnReset);
+            }
+
+            // add 'set weight' button on second click
+            if (NumOfNodes == 2)
+            {
+                btnWeight = new Button
+                {
+                    Text = "Set weight",
+                    FontSize = 25,
+                    WidthRequest = 200,
+                    HeightRequest = 60,
+                    VerticalOptions = LayoutOptions.Start,
+                    Margin = new Thickness(0, 110, 0, 0)
+                };
+                btnWeight.Clicked += WeightBtnClicked;
+
+                mainGrid.SetColumn(btnWeight, 0);
+                mainGrid.Children.Add(btnWeight);
             }
 
             // Get the position relative to the tapped UI element.
@@ -77,6 +98,8 @@ namespace Fastest_route_graph
 
         private void ResetBtnClicked(Object sender, EventArgs e)
         {
+            NumOfNodes = 0;
+
             ClickedPoints.Clear();
 
             // clears ClickedPoints in Drawing.cs
@@ -86,10 +109,29 @@ namespace Fastest_route_graph
             // calls the Draw method in Drawing.cs
             DrawSurface.Invalidate();
 
-            // removes button
-            mainGrid.Children.Remove((Button)sender);
+            // removes menu buttons
+            mainGrid.Children.Remove(btnReset);
 
-            IsResetBtnActive = false;
+            if (btnWeight != null)
+            {
+                mainGrid.Children.Remove(btnWeight);
+                btnWeight = null;
+            }
+        }
+
+        private void WeightBtnClicked(Object sender, EventArgs e)
+        {
+            btnWeightLabel = new Label
+            {
+                Text = "Select two nodes",
+                FontSize = 20,
+                HorizontalOptions = LayoutOptions.Center,
+                VerticalOptions = LayoutOptions.End,
+                Margin = new Thickness(0, 0, 0, 30)
+            };
+
+            mainGrid.SetColumn(btnWeightLabel, 0);
+            mainGrid.Children.Add(btnWeightLabel);
         }
 
         // when clicked in existing circle connects to the middle of it
