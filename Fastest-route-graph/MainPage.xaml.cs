@@ -6,13 +6,14 @@ namespace Fastest_route_graph
 {
     /* To Do:
      * 
-     * podswietlaj kolo na najechanie (probowalem, ale sie nie udalo)
+     * 
      * 
      */
 
     public partial class MainPage : ContentPage
     {
         private List<System.Drawing.PointF> ClickedPoints;
+        private List<List<int>> Matrix;
         private int CircleRadius;
         private int NumOfNodes;
         private Button btnReset;
@@ -25,6 +26,7 @@ namespace Fastest_route_graph
             RightSide.SizeChanged += BoxViewSizeChanged;
 
             ClickedPoints = new List<System.Drawing.PointF>();
+            Matrix = new List<List<int>>();
             CircleRadius = 30;
             NumOfNodes = 0;
         }
@@ -87,13 +89,47 @@ namespace Fastest_route_graph
                 // updates ClickedPoints List in this class
                 ClickedPoints.Add(p);
 
-                // updates clickedPoints List in Drawing class
+                // updates clickedPoints List in Drawing.cs
                 var drawable = (Drawing)this.Resources["MyDrawable"];
                 drawable.ClickedPoints = ClickedPoints;
 
                 // calls the Draw method in Drawing.cs
                 DrawSurface.Invalidate();
             }
+
+            // add indexes to the matrix
+            ExpandMatrix();
+        }
+
+        // adds +1 row and +1 column every time a new node is created
+        private void ExpandMatrix()
+        {
+            // create [0][0] when matrix is empty
+            if (Matrix.Count == 0)
+            {
+                Matrix.Add(new List<int>() { 0 });
+                return;
+            }
+
+            // add +1 width
+            foreach (List<int> row in Matrix)
+            {
+                row.Add(0);
+            }
+
+            // add +1 height
+            int width = Matrix[0].Count;
+            List<int> newRow = new List<int>(width);
+
+            for (int i = 0; i < width; i++)
+            {
+                newRow.Add(0);
+            }
+            Matrix.Add(newRow);
+
+            // updates matrix List in Graph.cs
+            var graph = new Graph();
+            graph.matrix = Matrix;
         }
 
         private void ResetBtnClicked(Object sender, EventArgs e)
