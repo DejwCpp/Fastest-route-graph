@@ -6,7 +6,7 @@ namespace Fastest_route_graph
 {
     /* To Do:
      * 
-     * 
+     * zapisuj indexy node'ow na podstawie ClickedPoints zeby moc na tej podstawie zrobic matrixa
      * 
      */
 
@@ -104,10 +104,16 @@ namespace Fastest_route_graph
         // adds +1 row and +1 column every time a new node is created
         private void ExpandMatrix()
         {
+            var graph = new Graph();
+
             // create [0][0] when matrix is empty
             if (Matrix.Count == 0)
             {
                 Matrix.Add(new List<int>() { 0 });
+
+                // updates matrix List in Graph.cs
+                graph.matrix = Matrix;
+
                 return;
             }
 
@@ -128,7 +134,6 @@ namespace Fastest_route_graph
             Matrix.Add(newRow);
 
             // updates matrix List in Graph.cs
-            var graph = new Graph();
             graph.matrix = Matrix;
         }
 
@@ -170,7 +175,7 @@ namespace Fastest_route_graph
             mainGrid.Children.Add(btnWeightLabel);
         }
 
-        // when clicked in existing circle connects to the middle of it
+        // handle clicking on a drawing field
         private System.Drawing.PointF PointPlacementConditions(System.Drawing.PointF p)
         {
             // prevents nodes from being placed too close to the side of the window
