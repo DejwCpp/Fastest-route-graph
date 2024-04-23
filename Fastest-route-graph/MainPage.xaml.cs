@@ -14,10 +14,14 @@ namespace Fastest_route_graph
     {
         private List<System.Drawing.PointF> ClickedPoints;
         private List<List<int>> Matrix;
+        private List<int> NodesIdx;
         private int CircleRadius;
+        private int NumOfLeftClick;
         private int NumOfNodes;
+        private int Weight;
         private Button btnReset;
         private Button btnWeight;
+        private Button btnFastest;
         private Label btnWeightLabel;
 
         public MainPage()
@@ -27,16 +31,19 @@ namespace Fastest_route_graph
 
             ClickedPoints = new List<System.Drawing.PointF>();
             Matrix = new List<List<int>>();
+            NodesIdx = new List<int>();
             CircleRadius = 30;
+            NumOfLeftClick = 0;
             NumOfNodes = 0;
+            Weight = 1;
         }
 
         private void MouseLeftClick(Object sender, TappedEventArgs e)
         {
-            NumOfNodes++;
+            NumOfLeftClick++;
 
             // add 'reset' button on first click
-            if (NumOfNodes == 1)
+            if (NumOfLeftClick == 1)
             {
                 btnReset = new Button
                 {
@@ -54,8 +61,9 @@ namespace Fastest_route_graph
             }
 
             // add 'set weight' button on second click
-            if (NumOfNodes == 2)
+            if (NumOfLeftClick == 2)
             {
+                // add btnWeight
                 btnWeight = new Button
                 {
                     Text = "Set weight",
@@ -69,6 +77,21 @@ namespace Fastest_route_graph
 
                 mainGrid.SetColumn(btnWeight, 0);
                 mainGrid.Children.Add(btnWeight);
+
+                // add btnFastest
+                btnFastest = new Button
+                {
+                    Text = "Fastest route",
+                    FontSize = 25,
+                    WidthRequest = 200,
+                    HeightRequest = 60,
+                    VerticalOptions = LayoutOptions.Start,
+                    Margin = new Thickness(0, 200, 0, 0)
+                };
+                btnFastest.Clicked += FastestRouteBtnClicked;
+
+                mainGrid.SetColumn(btnFastest, 0);
+                mainGrid.Children.Add(btnFastest);
             }
 
             // Get the position relative to the tapped UI element.
@@ -86,7 +109,6 @@ namespace Fastest_route_graph
 
                 if (p.X == -1 && p.Y == -1) { return; }
 
-                // updates ClickedPoints List in this class
                 ClickedPoints.Add(p);
 
                 // updates clickedPoints List in Drawing.cs
@@ -96,23 +118,15 @@ namespace Fastest_route_graph
                 // calls the Draw method in Drawing.cs
                 DrawSurface.Invalidate();
             }
-
-            // add indexes to the matrix
-            ExpandMatrix();
         }
 
         // adds +1 row and +1 column every time a new node is created
         private void ExpandMatrix()
         {
-            var graph = new Graph();
-
             // create [0][0] when matrix is empty
             if (Matrix.Count == 0)
             {
                 Matrix.Add(new List<int>() { 0 });
-
-                // updates matrix List in Graph.cs
-                graph.matrix = Matrix;
 
                 return;
             }
@@ -132,9 +146,6 @@ namespace Fastest_route_graph
                 newRow.Add(0);
             }
             Matrix.Add(newRow);
-
-            // updates matrix List in Graph.cs
-            graph.matrix = Matrix;
         }
 
         private void ResetBtnClicked(Object sender, EventArgs e)
@@ -175,6 +186,20 @@ namespace Fastest_route_graph
             mainGrid.Children.Add(btnWeightLabel);
         }
 
+        private void FastestRouteBtnClicked(Object sender, EventArgs e)
+        {
+            // fill matrix
+            for (int i = 1; i < NodesIdx.Count; i++)
+            {
+                Matrix[NodesIdx[i - 1]][NodesIdx[i    ]] = 1;
+                Matrix[NodesIdx[i    ]][NodesIdx[i - 1]] = 1;
+            }
+            // updates matrix List in Graph.cs
+            var graph = new Graph();
+
+            graph.matrix = Matrix;
+        }
+
         // handle clicking on a drawing field
         private System.Drawing.PointF PointPlacementConditions(System.Drawing.PointF p)
         {
@@ -204,6 +229,8 @@ namespace Fastest_route_graph
                     p.X = (int)ClickedPoints[i].X;
                     p.Y = (int)ClickedPoints[i].Y;
 
+                    NodesIdx.Add(i);
+
                     return p;
                 }
                 // prevents nodes from being placed too close from each other
@@ -212,6 +239,13 @@ namespace Fastest_route_graph
                     return new System.Drawing.PointF(-1, -1);
                 }
             }
+            // add indexes to the matrix
+            ExpandMatrix();
+
+            NodesIdx.Add(NumOfNodes);
+
+            NumOfNodes++;
+
             return p;
         }
 
