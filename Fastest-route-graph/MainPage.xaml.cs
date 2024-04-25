@@ -194,10 +194,16 @@ namespace Fastest_route_graph
                 Matrix[NodesIdx[i - 1]][NodesIdx[i    ]] = 1;
                 Matrix[NodesIdx[i    ]][NodesIdx[i - 1]] = 1;
             }
+
             // updates matrix List in Graph.cs
             var graph = new Graph();
-
             graph.matrix = Matrix;
+
+            // sets nodes id | e.g. for NumOfNodes = 4 -> node.id = {0, 1, 2, 3}
+            var node = new Node();
+            graph.Q = node.GetNodesId(NumOfNodes);
+
+            graph.FindFastestRoute();
         }
 
         // handle clicking on a drawing field
