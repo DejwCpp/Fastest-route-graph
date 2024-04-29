@@ -9,14 +9,12 @@ namespace Fastest_route_graph.Resources.Class
     internal class Node
     {
         public int Id { get; set; }
-        public bool IsDone { get; set; }
         public int Distance { get; set; }
         public int Path {  get; set; }
 
         public Node()
         {
             Id = 0;
-            IsDone = false;
             Distance = int.MaxValue;
             Path = -1;
         }
