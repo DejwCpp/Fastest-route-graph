@@ -27,7 +27,8 @@ namespace Fastest_route_graph.Resources.Class
             {
                 canvas.FillColor = Colors.White;
 
-                if (i == 0)
+                // marks the first node with a different color
+                if (ClickedPoints[i].X == ClickedPoints[0].X && ClickedPoints[i].Y == ClickedPoints[0].Y)
                 {
                     canvas.FillColor = Colors.Khaki;
                 }

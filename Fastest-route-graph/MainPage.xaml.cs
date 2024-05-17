@@ -6,7 +6,6 @@ namespace Fastest_route_graph
 {
     /* To Do:
      * 
-     * mark the first node with a different color
      * after clicking btn 'Fastest route' ask to select the end node
      * mark the path with a color
      * 
