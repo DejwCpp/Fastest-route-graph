@@ -15,6 +15,8 @@ namespace Fastest_route_graph.Resources.Class
 
         public void FindFastestRoute()
         {
+            Q[0].Distance = 0;
+
             numOfNodes = Q.Count;
 
             while (Q.Count > 0)
@@ -39,10 +41,8 @@ namespace Fastest_route_graph.Resources.Class
 
                         if (node.Distance > actualNode.Distance + matrix[actualNode.Id][i])
                         {
-                            node.Distance = node.Distance + matrix[actualNode.Id][i];
+                            node.Distance = actualNode.Distance + matrix[actualNode.Id][i];
                             node.Path = actualNode.Id;
-
-                            Q = SetNodeWithId(i, Q, node);
                         }
                     }
                 }

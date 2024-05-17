@@ -6,7 +6,9 @@ namespace Fastest_route_graph
 {
     /* To Do:
      * 
-     * zapisuj indexy node'ow na podstawie ClickedPoints zeby moc na tej podstawie zrobic matrixa
+     * mark the first node with a different color
+     * after clicking btn 'Fastest route' ask to select the end node
+     * mark the path with a color
      * 
      */
 
@@ -203,6 +205,10 @@ namespace Fastest_route_graph
             var node = new Node();
             graph.Q = node.GetNodesId(NumOfNodes);
 
+            // here ask user for an end node and store it's id into varriable
+
+
+            // the hardest part in my opinion
             graph.FindFastestRoute();
         }
 
