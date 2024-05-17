@@ -26,12 +26,6 @@ namespace Fastest_route_graph.Resources.Class
                 DeleteNodeWithId(actualNode.Id, Q);
                 S.Add(actualNode);
 
-                /*
-                 *
-                 * There is a logical error in this loop that i need to debug later
-                 *
-                 */
-
                 // find connections between nodes according to matrix
                 for (int i = 0; i < numOfNodes; i++)
                 {
