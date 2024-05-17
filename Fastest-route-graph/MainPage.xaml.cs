@@ -47,53 +47,15 @@ namespace Fastest_route_graph
             // add 'reset' button on first click
             if (NumOfLeftClick == 1)
             {
-                btnReset = new Button
-                {
-                    Text = "Reset",
-                    FontSize = 30,
-                    WidthRequest = 200,
-                    HeightRequest = 60,
-                    VerticalOptions = LayoutOptions.Start,
-                    Margin = new Thickness(0, 30, 0, 0)
-                };
-                btnReset.Clicked += ResetBtnClicked;
-
-                mainGrid.SetColumn(btnReset, 0);
-                mainGrid.Children.Add(btnReset);
+                CreateResetBtn();
             }
 
-            // add 'set weight' button on second click
+            // add 'Set weight' and 'Fastest route' button on second click
             if (NumOfLeftClick == 2)
             {
-                // add btnWeight
-                btnWeight = new Button
-                {
-                    Text = "Set weight",
-                    FontSize = 25,
-                    WidthRequest = 200,
-                    HeightRequest = 60,
-                    VerticalOptions = LayoutOptions.Start,
-                    Margin = new Thickness(0, 110, 0, 0)
-                };
-                btnWeight.Clicked += WeightBtnClicked;
+                CreateSetWeightBtn();
 
-                mainGrid.SetColumn(btnWeight, 0);
-                mainGrid.Children.Add(btnWeight);
-
-                // add btnFastest
-                btnFastest = new Button
-                {
-                    Text = "Fastest route",
-                    FontSize = 25,
-                    WidthRequest = 200,
-                    HeightRequest = 60,
-                    VerticalOptions = LayoutOptions.Start,
-                    Margin = new Thickness(0, 200, 0, 0)
-                };
-                btnFastest.Clicked += FastestRouteBtnClicked;
-
-                mainGrid.SetColumn(btnFastest, 0);
-                mainGrid.Children.Add(btnFastest);
+                CreateFastestRouteBtn();
             }
 
             // Get the position relative to the tapped UI element.
@@ -119,6 +81,66 @@ namespace Fastest_route_graph
 
                 // calls the Draw method in Drawing.cs
                 DrawSurface.Invalidate();
+            }
+        }
+
+        private void CreateResetBtn()
+        {
+            btnReset = new Button
+            {
+                Text = "Reset",
+                FontSize = 30,
+                WidthRequest = 200,
+                HeightRequest = 60,
+                VerticalOptions = LayoutOptions.Start,
+                Margin = new Thickness(0, 30, 0, 0)
+            };
+            btnReset.Clicked += ResetBtnClicked;
+
+            mainGrid.SetColumn(btnReset, 0);
+            mainGrid.Children.Add(btnReset);
+        }
+
+        private void CreateSetWeightBtn()
+        {
+            btnWeight = new Button
+            {
+                Text = "Set weight",
+                FontSize = 25,
+                WidthRequest = 200,
+                HeightRequest = 60,
+                VerticalOptions = LayoutOptions.Start,
+                Margin = new Thickness(0, 110, 0, 0)
+            };
+            btnWeight.Clicked += WeightBtnClicked;
+
+            mainGrid.SetColumn(btnWeight, 0);
+            mainGrid.Children.Add(btnWeight);
+        }
+
+        private void CreateFastestRouteBtn()
+        {
+            btnFastest = new Button
+            {
+                Text = "Fastest route",
+                FontSize = 25,
+                WidthRequest = 200,
+                HeightRequest = 60,
+                VerticalOptions = LayoutOptions.Start,
+                Margin = new Thickness(0, 200, 0, 0)
+            };
+            btnFastest.Clicked += FastestRouteBtnClicked;
+
+            mainGrid.SetColumn(btnFastest, 0);
+            mainGrid.Children.Add(btnFastest);
+        }
+
+        private void RemoveButton(Button btn)
+        {
+            if (btn != null)
+            {
+                mainGrid.Children.Remove(btn);
+                btn = null;
             }
         }
 
@@ -153,6 +175,7 @@ namespace Fastest_route_graph
         private void ResetBtnClicked(Object sender, EventArgs e)
         {
             NumOfNodes = 0;
+            NumOfLeftClick = 0;
 
             ClickedPoints.Clear();
 
@@ -164,13 +187,9 @@ namespace Fastest_route_graph
             DrawSurface.Invalidate();
 
             // removes menu buttons
-            mainGrid.Children.Remove(btnReset);
-
-            if (btnWeight != null)
-            {
-                mainGrid.Children.Remove(btnWeight);
-                btnWeight = null;
-            }
+            RemoveButton(btnReset);
+            RemoveButton(btnWeight);
+            RemoveButton(btnFastest);
         }
 
         private void WeightBtnClicked(Object sender, EventArgs e)
