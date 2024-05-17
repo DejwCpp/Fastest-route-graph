@@ -8,22 +8,27 @@ namespace Fastest_route_graph
      * 
      * after clicking btn 'Fastest route' ask to select the end node
      * mark the path with a color
+     * handle clicking on SetWeight button
      * 
      */
 
     public partial class MainPage : ContentPage
     {
+        public System.Drawing.PointF TargetPoint;
+        public int TargetPointId;
         private List<System.Drawing.PointF> ClickedPoints;
+        private List<System.Drawing.PointF> NodesPlacement;
         private List<List<int>> Matrix;
         private List<int> NodesIdx;
         private int CircleRadius;
         private int NumOfLeftClick;
         private int NumOfNodes;
         private int Weight;
+        private bool SelectMode;
         private Button btnReset;
         private Button btnWeight;
         private Button btnFastest;
-        private Label btnWeightLabel;
+        private Label btnBottomLeftLabel;
 
         public MainPage()
         {
@@ -31,12 +36,14 @@ namespace Fastest_route_graph
             RightSide.SizeChanged += BoxViewSizeChanged;
 
             ClickedPoints = new List<System.Drawing.PointF>();
+            NodesPlacement = new List<System.Drawing.PointF>();
             Matrix = new List<List<int>>();
             NodesIdx = new List<int>();
             CircleRadius = 30;
             NumOfLeftClick = 0;
             NumOfNodes = 0;
             Weight = 1;
+            SelectMode = false;
         }
 
         private void MouseLeftClick(Object sender, TappedEventArgs e)
@@ -72,11 +79,33 @@ namespace Fastest_route_graph
 
                 if (p.X == -1 && p.Y == -1) { return; }
 
-                ClickedPoints.Add(p);
-
-                // updates clickedPoints List in Drawing.cs
+                // anables connection to Drawing.cs
                 var drawable = (Drawing)this.Resources["MyDrawable"];
-                drawable.ClickedPoints = ClickedPoints;
+
+                if (SelectMode == true)
+                {
+                    // this code doesn't makes too much sense at this moment. TargetPoint and graph.Q is null <-------------------------------------------------
+
+                    // get target node id
+                    var graph = new Graph();
+                    Node node = new Node();
+                    
+                    Node temp = node.GetNodeFromThisLocation(TargetPoint, graph.Q);
+
+                    TargetPointId = temp.Id;
+
+                    TargetPoint = p;
+
+                    // updates TargetPoint Point in Drawing.cs
+                    drawable.TargetPoint = TargetPoint;
+                }
+                if (SelectMode == false)
+                {
+                    ClickedPoints.Add(p);
+
+                    // updates clickedPoints List in Drawing.cs
+                    drawable.ClickedPoints = ClickedPoints;
+                }
 
                 // calls the Draw method in Drawing.cs
                 DrawSurface.Invalidate();
@@ -143,6 +172,21 @@ namespace Fastest_route_graph
             }
         }
 
+        private void CreateBottomLeftLabel(string text)
+        {
+            btnBottomLeftLabel = new Label
+            {
+                Text = text,
+                FontSize = 20,
+                HorizontalOptions = LayoutOptions.Center,
+                VerticalOptions = LayoutOptions.End,
+                Margin = new Thickness(0, 0, 0, 30)
+            };
+
+            mainGrid.SetColumn(btnBottomLeftLabel, 0);
+            mainGrid.Children.Add(btnBottomLeftLabel);
+        }
+
         // adds +1 row and +1 column every time a new node is created
         private void ExpandMatrix()
         {
@@ -193,17 +237,7 @@ namespace Fastest_route_graph
 
         private void WeightBtnClicked(Object sender, EventArgs e)
         {
-            btnWeightLabel = new Label
-            {
-                Text = "Select two nodes",
-                FontSize = 20,
-                HorizontalOptions = LayoutOptions.Center,
-                VerticalOptions = LayoutOptions.End,
-                Margin = new Thickness(0, 0, 0, 30)
-            };
-
-            mainGrid.SetColumn(btnWeightLabel, 0);
-            mainGrid.Children.Add(btnWeightLabel);
+            CreateBottomLeftLabel("Select two nodes");
         }
 
         private void FastestRouteBtnClicked(Object sender, EventArgs e)
@@ -220,14 +254,31 @@ namespace Fastest_route_graph
             graph.matrix = Matrix;
 
             // sets nodes id | e.g. for NumOfNodes = 4 -> node.id = {0, 1, 2, 3}
-            var node = new Node();
-            graph.Q = node.GetNodesId(NumOfNodes);
+            graph.Q = GetNodesInfo(NumOfNodes);
 
             // here ask user for an end node and store it's id into varriable
-
+            CreateBottomLeftLabel("Select target node");
+            SelectMode = true;
 
             // the hardest part in my opinion
             graph.FindFastestRoute();
+        }
+        
+        // sets id and position to all the nodes
+        private List<Node> GetNodesInfo(int size)
+        {
+            List<Node> arr = new List<Node>();
+
+            for (int i = 0; i < size; i++)
+            {
+                Node node = new Node();
+
+                node.Id = i;
+                node.Position = NodesPlacement[i];
+
+                arr.Add(node);
+            }
+            return arr;
         }
 
         // handle clicking on a drawing field
@@ -239,13 +290,16 @@ namespace Fastest_route_graph
                 return new System.Drawing.PointF(-1, -1);
             }
             // prevent creating new node when clicked in the area of last added node
-            if (ClickedPoints.Count >= 1)
+            if (SelectMode == false)
             {
-                double lastNodeDistance = Math.Sqrt(Math.Pow(p.X - ClickedPoints[ClickedPoints.Count - 1].X, 2) + Math.Pow(p.Y - ClickedPoints[ClickedPoints.Count - 1].Y, 2));
-
-                if (lastNodeDistance <= CircleRadius)
+                if (ClickedPoints.Count >= 1)
                 {
-                    return new System.Drawing.PointF(-1, -1);
+                    double lastNodeDistance = Math.Sqrt(Math.Pow(p.X - ClickedPoints[ClickedPoints.Count - 1].X, 2) + Math.Pow(p.Y - ClickedPoints[ClickedPoints.Count - 1].Y, 2));
+
+                    if (lastNodeDistance <= CircleRadius)
+                    {
+                        return new System.Drawing.PointF(-1, -1);
+                    }
                 }
             }
 
@@ -269,13 +323,16 @@ namespace Fastest_route_graph
                     return new System.Drawing.PointF(-1, -1);
                 }
             }
-            // add indexes to the matrix
-            ExpandMatrix();
+            if (SelectMode == false)
+            {
+                // add indexes to the matrix
+                ExpandMatrix();
 
-            NodesIdx.Add(NumOfNodes);
+                NodesPlacement.Add(p);
+                NodesIdx.Add(NumOfNodes);
 
-            NumOfNodes++;
-
+                NumOfNodes++;
+            }
             return p;
         }
 

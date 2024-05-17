@@ -9,6 +9,7 @@ namespace Fastest_route_graph.Resources.Class
     internal class Drawing : IDrawable
     {
         public List<System.Drawing.PointF> ClickedPoints { get; set; } = new List<System.Drawing.PointF>();
+        public System.Drawing.PointF TargetPoint = new System.Drawing.PointF();
 
         public void Draw(ICanvas canvas, RectF dirtyRect)
         {
@@ -31,6 +32,11 @@ namespace Fastest_route_graph.Resources.Class
                 if (ClickedPoints[i].X == ClickedPoints[0].X && ClickedPoints[i].Y == ClickedPoints[0].Y)
                 {
                     canvas.FillColor = Colors.Khaki;
+                }
+                // marks the target node with a different color
+                if (ClickedPoints[i].X == TargetPoint.X && ClickedPoints[i].Y == TargetPoint.Y)
+                {
+                    canvas.FillColor = Colors.Blue;
                 }
 
                 canvas.FillCircle(ClickedPoints[i].X, ClickedPoints[i].Y, 30);

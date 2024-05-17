@@ -11,27 +11,19 @@ namespace Fastest_route_graph.Resources.Class
         public int Id { get; set; }
         public int Distance { get; set; }
         public int Path {  get; set; }
+        public System.Drawing.PointF Position { get; set; }
 
         public Node()
         {
             Id = 0;
             Distance = int.MaxValue;
             Path = -1;
+            Position = new System.Drawing.PointF();
         }
 
-        public List<Node> GetNodesId(int size)
+        public Node GetNodeFromThisLocation(System.Drawing.PointF point, List<Node> nodes)
         {
-            List<Node> arr = new List<Node>();
-
-            for (int i = 0; i < size; i++)
-            {
-                Node node = new Node();
-
-                node.Id = i;
-
-                arr.Add(node);
-            }
-            return arr;
+            return nodes.Find(n => n.Position.X == point.X && n.Position.Y == point.Y);
         }
     }
 }
