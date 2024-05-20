@@ -14,7 +14,6 @@ namespace Fastest_route_graph
 
     public partial class MainPage : ContentPage
     {
-        public System.Drawing.PointF TargetPoint;
         public int TargetPointId;
         private List<System.Drawing.PointF> ClickedPoints;
         private List<System.Drawing.PointF> NodesPlacement;
@@ -84,20 +83,24 @@ namespace Fastest_route_graph
 
                 if (SelectMode == true)
                 {
+                    // to da sie zrobic 100 razy latwiej bo juz w klasie Node mam Position Node'a
+
                     // this code doesn't makes too much sense at this moment. TargetPoint and graph.Q is null <-------------------------------------------------
+
+                    Node TargetPoint = new Node();
 
                     // get target node id
                     var graph = new Graph();
                     Node node = new Node();
-                    
-                    Node temp = node.GetNodeFromThisLocation(TargetPoint, graph.Q);
+
+                    TargetPoint.Position = p;
+
+                    Node temp = node.GetNodeFromThisLocation(TargetPoint.Position, graph.Q);
 
                     TargetPointId = temp.Id;
 
-                    TargetPoint = p;
-
                     // updates TargetPoint Point in Drawing.cs
-                    drawable.TargetPoint = TargetPoint;
+                    drawable.TargetPoint = TargetPoint.Position;
                 }
                 if (SelectMode == false)
                 {

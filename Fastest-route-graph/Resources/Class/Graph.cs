@@ -12,6 +12,7 @@ namespace Fastest_route_graph.Resources.Class
         public List<Node> Q = new List<Node>();
         private List<Node> S = new List<Node>();
         private int numOfNodes;
+        private int TargetPointId;
 
         public void FindFastestRoute()
         {
@@ -87,5 +88,12 @@ namespace Fastest_route_graph.Resources.Class
 
             return nodes;
         }
+
+        /*public void SetTargetPointId()
+        {
+            Node node = new Node();
+
+            Node temp = node.GetNodeFromThisLocation()
+        }*/
     }
 }
