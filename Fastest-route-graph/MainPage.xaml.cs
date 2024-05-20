@@ -6,15 +6,15 @@ namespace Fastest_route_graph
 {
     /* To Do:
      * 
-     * after clicking btn 'Fastest route' ask to select the end node
-     * mark the path with a color
      * handle clicking on SetWeight button
+     * make Label disapear in the right moments
      * 
      */
 
     public partial class MainPage : ContentPage
     {
         public int TargetPointId;
+        public List<System.Drawing.PointF> PathToDraw;
         private List<System.Drawing.PointF> ClickedPoints;
         private List<System.Drawing.PointF> NodesPlacement;
         private List<List<int>> Matrix;
@@ -34,6 +34,7 @@ namespace Fastest_route_graph
             InitializeComponent();
             RightSide.SizeChanged += BoxViewSizeChanged;
 
+            PathToDraw = new List<System.Drawing.PointF>();
             ClickedPoints = new List<System.Drawing.PointF>();
             NodesPlacement = new List<System.Drawing.PointF>();
             Matrix = new List<List<int>>();
@@ -83,24 +84,27 @@ namespace Fastest_route_graph
 
                 if (SelectMode == true)
                 {
-                    // to da sie zrobic 100 razy latwiej bo juz w klasie Node mam Position Node'a
+                    // updates matrix List in Graph.cs
+                    var graph = new Graph();
+                    graph.matrix = Matrix;
 
-                    // this code doesn't makes too much sense at this moment. TargetPoint and graph.Q is null <-------------------------------------------------
+                    // sets nodes id | e.g. for NumOfNodes = 4 -> node.id = {0, 1, 2, 3}
+                    graph.Q = GetNodesInfo(NumOfNodes);
 
                     Node TargetPoint = new Node();
 
-                    // get target node id
-                    var graph = new Graph();
-                    Node node = new Node();
-
                     TargetPoint.Position = p;
-
-                    Node temp = node.GetNodeFromThisLocation(TargetPoint.Position, graph.Q);
-
-                    TargetPointId = temp.Id;
 
                     // updates TargetPoint Point in Drawing.cs
                     drawable.TargetPoint = TargetPoint.Position;
+
+                    TargetPoint = TargetPoint.GetNodeFromThisLocation(TargetPoint.Position, graph.Q);
+
+                    // the hardest part in my opinion
+                    graph.FindFastestRoute(TargetPoint.Id);
+
+                    PathToDraw = graph.PathToDraw;
+                    drawable.PathToDraw = PathToDraw;
                 }
                 if (SelectMode == false)
                 {
@@ -228,6 +232,7 @@ namespace Fastest_route_graph
             // clears ClickedPoints in Drawing.cs
             var drawable = (Drawing)this.Resources["MyDrawable"];
             drawable.ClickedPoints.Clear();
+            drawable.PathToDraw.Clear();
 
             // calls the Draw method in Drawing.cs
             DrawSurface.Invalidate();
@@ -252,19 +257,11 @@ namespace Fastest_route_graph
                 Matrix[NodesIdx[i    ]][NodesIdx[i - 1]] = 1;
             }
 
-            // updates matrix List in Graph.cs
-            var graph = new Graph();
-            graph.matrix = Matrix;
-
-            // sets nodes id | e.g. for NumOfNodes = 4 -> node.id = {0, 1, 2, 3}
-            graph.Q = GetNodesInfo(NumOfNodes);
-
             // here ask user for an end node and store it's id into varriable
             CreateBottomLeftLabel("Select target node");
             SelectMode = true;
 
-            // the hardest part in my opinion
-            graph.FindFastestRoute();
+            // when SelectMode = true it enables condition in leftClick method
         }
         
         // sets id and position to all the nodes

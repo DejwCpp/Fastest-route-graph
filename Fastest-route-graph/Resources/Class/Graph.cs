@@ -8,13 +8,13 @@ namespace Fastest_route_graph.Resources.Class
 {
     internal class Graph
     {
+        public List<System.Drawing.PointF> PathToDraw = new List<System.Drawing.PointF>();
         public List<List<int>> matrix = new List<List<int>>();
         public List<Node> Q = new List<Node>();
         private List<Node> S = new List<Node>();
         private int numOfNodes;
-        private int TargetPointId;
 
-        public void FindFastestRoute()
+        public void FindFastestRoute(int TargetNodeId)
         {
             Q[0].Distance = 0;
 
@@ -42,6 +42,18 @@ namespace Fastest_route_graph.Resources.Class
                     }
                 }
             }
+            // filling a List of Points with a path to draw
+            Node temp = GetNodeWithId(TargetNodeId, S);
+
+            while (temp.Id != 0)
+            {
+                PathToDraw.Add(temp.Position);
+                temp = GetNodeWithId(temp.Path, S);
+            }
+            PathToDraw.Add(temp.Position);
+
+            Drawing drawing = new Drawing();
+            drawing.PathToDraw = PathToDraw;
         }
 
         private Node FindNodeIdForLowestDistance(List<Node> nodes)

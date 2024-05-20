@@ -9,6 +9,7 @@ namespace Fastest_route_graph.Resources.Class
     internal class Drawing : IDrawable
     {
         public List<System.Drawing.PointF> ClickedPoints { get; set; } = new List<System.Drawing.PointF>();
+        public List<System.Drawing.PointF> PathToDraw { get; set; } = new List<System.Drawing.PointF>();
         public System.Drawing.PointF TargetPoint = new System.Drawing.PointF();
 
         public void Draw(ICanvas canvas, RectF dirtyRect)
@@ -41,6 +42,21 @@ namespace Fastest_route_graph.Resources.Class
 
                 canvas.FillCircle(ClickedPoints[i].X, ClickedPoints[i].Y, 30);
             }
+
+            // draw target path if exists
+            if (PathToDraw.Count == 0)
+                return;
+
+            canvas.StrokeColor = Colors.Red;
+            canvas.FillColor = Colors.Red;
+            canvas.StrokeSize = 8;
+
+            for (int i = 0; i < PathToDraw.Count - 1; i++)
+            {
+                canvas.DrawLine(PathToDraw[i].X, PathToDraw[i].Y, PathToDraw[i + 1].X, PathToDraw[i + 1].Y);
+                canvas.FillCircle(PathToDraw[i].X, PathToDraw[i].Y, 35);
+            }
+            canvas.FillCircle(PathToDraw[PathToDraw.Count - 1].X, PathToDraw[PathToDraw.Count - 1].Y, 35);
         }
     }
 }
