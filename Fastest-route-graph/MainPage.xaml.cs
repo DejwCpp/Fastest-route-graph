@@ -27,7 +27,7 @@ namespace Fastest_route_graph
         private Button btnReset;
         private Button btnWeight;
         private Button btnFastest;
-        private Label btnBottomLeftLabel;
+        private Label BottomLeftLabel;
 
         public MainPage()
         {
@@ -84,6 +84,9 @@ namespace Fastest_route_graph
 
                 if (SelectMode == true)
                 {
+                    // delete label 'Select two nodes'
+                    mainGrid.Children.Remove(BottomLeftLabel);
+
                     // updates matrix List in Graph.cs
                     var graph = new Graph();
                     graph.matrix = Matrix;
@@ -181,7 +184,7 @@ namespace Fastest_route_graph
 
         private void CreateBottomLeftLabel(string text)
         {
-            btnBottomLeftLabel = new Label
+            BottomLeftLabel = new Label
             {
                 Text = text,
                 FontSize = 20,
@@ -190,8 +193,8 @@ namespace Fastest_route_graph
                 Margin = new Thickness(0, 0, 0, 30)
             };
 
-            mainGrid.SetColumn(btnBottomLeftLabel, 0);
-            mainGrid.Children.Add(btnBottomLeftLabel);
+            mainGrid.SetColumn(BottomLeftLabel, 0);
+            mainGrid.Children.Add(BottomLeftLabel);
         }
 
         // adds +1 row and +1 column every time a new node is created
@@ -224,23 +227,8 @@ namespace Fastest_route_graph
 
         private void ResetBtnClicked(Object sender, EventArgs e)
         {
-            NumOfNodes = 0;
-            NumOfLeftClick = 0;
-
-            ClickedPoints.Clear();
-
-            // clears ClickedPoints in Drawing.cs
-            var drawable = (Drawing)this.Resources["MyDrawable"];
-            drawable.ClickedPoints.Clear();
-            drawable.PathToDraw.Clear();
-
-            // calls the Draw method in Drawing.cs
-            DrawSurface.Invalidate();
-
-            // removes menu buttons
-            RemoveButton(btnReset);
-            RemoveButton(btnWeight);
-            RemoveButton(btnFastest);
+            Preferences.Clear();
+            Application.Current.MainPage = new MainPage();
         }
 
         private void WeightBtnClicked(Object sender, EventArgs e)
