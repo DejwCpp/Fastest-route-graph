@@ -7,7 +7,6 @@ namespace Fastest_route_graph
     /* To Do:
      * 
      * handle clicking on SetWeight button
-     * make Label disapear in the right moments
      * 
      */
 
@@ -84,9 +83,6 @@ namespace Fastest_route_graph
 
                 if (SelectMode == true)
                 {
-                    // delete label 'Select two nodes'
-                    mainGrid.Children.Remove(BottomLeftLabel);
-
                     // updates matrix List in Graph.cs
                     var graph = new Graph();
                     graph.matrix = Matrix;
@@ -184,6 +180,9 @@ namespace Fastest_route_graph
 
         private void CreateBottomLeftLabel(string text)
         {
+            // delete label in left bottom
+            mainGrid.Children.Remove(BottomLeftLabel);
+
             BottomLeftLabel = new Label
             {
                 Text = text,
