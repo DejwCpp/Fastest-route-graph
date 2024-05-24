@@ -1,6 +1,8 @@
 ﻿using Microsoft.Maui.Graphics;
 using System.Drawing;
 using Fastest_route_graph.Resources.Class;
+using static System.Net.Mime.MediaTypeNames;
+using Microsoft.Maui.Layouts;
 
 namespace Fastest_route_graph
 {
@@ -22,11 +24,16 @@ namespace Fastest_route_graph
         private int NumOfLeftClick;
         private int NumOfNodes;
         private int Weight;
+        private int CountSetWeightClicks;
         private bool SelectMode;
+        private bool setWeightActive;
         private Button btnReset;
         private Button btnWeight;
         private Button btnFastest;
         private Label BottomLeftLabel;
+        private Label WeightLabel;
+        Node Connect1 = new Node();
+        Node Connect2 = new Node();
 
         public MainPage()
         {
@@ -43,6 +50,8 @@ namespace Fastest_route_graph
             NumOfNodes = 0;
             Weight = 1;
             SelectMode = false;
+            setWeightActive = false;
+            CountSetWeightClicks = 1;
         }
 
         private void MouseLeftClick(Object sender, TappedEventArgs e)
@@ -104,14 +113,44 @@ namespace Fastest_route_graph
 
                     PathToDraw = graph.PathToDraw;
                     drawable.PathToDraw = PathToDraw;
-                }
-                if (SelectMode == false)
-                {
-                    ClickedPoints.Add(p);
 
-                    // updates clickedPoints List in Drawing.cs
-                    drawable.ClickedPoints = ClickedPoints;
+                    // calls the Draw method in Drawing.cs
+                    DrawSurface.Invalidate();
+
+                    return;
                 }
+                if (setWeightActive == true && CountSetWeightClicks <= 2)
+                {
+                    // updates matrix List in Graph.cs
+                    var graph = new Graph();
+                    graph.matrix = Matrix;
+
+                    // sets nodes id | e.g. for NumOfNodes = 4 -> node.id = {0, 1, 2, 3}
+                    graph.Q = GetNodesInfo(NumOfNodes);
+
+                    if (CountSetWeightClicks == 1)
+                    {
+                        Connect1 = Connect1.GetNodeFromThisLocation(p, graph.Q);
+                    }
+                    if (CountSetWeightClicks == 2)
+                    {
+                        Connect2 = Connect2.GetNodeFromThisLocation(p, graph.Q);
+
+                        CreateWeightLabel(Connect1, Connect2);
+                    }
+
+                    CountSetWeightClicks++;
+
+                    // calls the Draw method in Drawing.cs (but at first i'll try to create a label in the middle of a connecting line)
+                    /*DrawSurface.Invalidate();*/
+
+                    return;
+                }
+
+                ClickedPoints.Add(p);
+
+                // updates clickedPoints List in Drawing.cs
+                drawable.ClickedPoints = ClickedPoints;
 
                 // calls the Draw method in Drawing.cs
                 DrawSurface.Invalidate();
@@ -196,6 +235,26 @@ namespace Fastest_route_graph
             mainGrid.Children.Add(BottomLeftLabel);
         }
 
+        private void CreateWeightLabel(Node n1, Node n2) // tutaj trzeba cos zrobic zeby dzialalo <-----------------------------------------------------------------
+        {
+            // we have to create AbsoluteLayout at first
+            var absoluteLayout = new AbsoluteLayout();
+
+            WeightLabel = new Label
+            {
+                Text = "tu trza zmienic",
+                FontSize = 20,
+                HorizontalOptions = LayoutOptions.Center,
+                VerticalOptions = LayoutOptions.End,
+            };
+
+            // positioning the label
+            AbsoluteLayout.SetLayoutBounds(WeightLabel, new Rect(100, 200, AbsoluteLayout.AutoSize, AbsoluteLayout.AutoSize));
+            AbsoluteLayout.SetLayoutFlags(WeightLabel, AbsoluteLayoutFlags.None);
+
+            absoluteLayout.Children.Add(WeightLabel);
+        }
+
         // adds +1 row and +1 column every time a new node is created
         private void ExpandMatrix()
         {
@@ -227,12 +286,16 @@ namespace Fastest_route_graph
         private void ResetBtnClicked(Object sender, EventArgs e)
         {
             Preferences.Clear();
-            Application.Current.MainPage = new MainPage();
+            // tu bylo zmieniane, wiec moze nie dzialac przez dopisek  'Microsoft.Maui.Controls' <--------------------------------------------------------------------
+            Microsoft.Maui.Controls.Application.Current.MainPage = new MainPage();
         }
 
         private void WeightBtnClicked(Object sender, EventArgs e)
         {
             CreateBottomLeftLabel("Select two nodes");
+
+            setWeightActive = true;
+
         }
 
         private void FastestRouteBtnClicked(Object sender, EventArgs e)
@@ -277,7 +340,7 @@ namespace Fastest_route_graph
                 return new System.Drawing.PointF(-1, -1);
             }
             // prevent creating new node when clicked in the area of last added node
-            if (SelectMode == false)
+            /*if (SelectMode == false)
             {
                 if (ClickedPoints.Count >= 1)
                 {
@@ -288,7 +351,7 @@ namespace Fastest_route_graph
                         return new System.Drawing.PointF(-1, -1);
                     }
                 }
-            }
+            }*/
 
             for (int i = 0; i < ClickedPoints.Count; i++)
             {

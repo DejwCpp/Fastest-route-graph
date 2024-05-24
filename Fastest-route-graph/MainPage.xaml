@@ -20,15 +20,15 @@
         <!-- Left Panel: -->
         <!-- #1 Number of nodes -->
         <!-- #2 Reset nodes -->
-        
-        
+
+
 
         <!-- Right Panel -->
         <GraphicsView
-            x:Name="DrawSurface"
-            HorizontalOptions="Fill"
-            Drawable="{StaticResource MyDrawable}"
-            Grid.Column="1">
+        x:Name="DrawSurface"
+        HorizontalOptions="Fill"
+        Drawable="{StaticResource MyDrawable}"
+        Grid.Column="1">
 
             <GraphicsView.GestureRecognizers>
                 <TapGestureRecognizer Tapped="MouseLeftClick" />
